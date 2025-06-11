@@ -1,5 +1,6 @@
 # Experimental!
 I ~ "git: https://github.com/marcos-cat/iris"
+R ~ "git: https://github.com/uiua-lang/rayua"
 
 ┌─╴Game
   ~ {
@@ -34,7 +35,14 @@ I ~ "git: https://github.com/marcos-cat/iris"
     Char ← 23_40
     Pos  ← 30_30
 
-    D ↚ I~Draw~Text ⊙Size⊙Pos I~Draw~Background I~Color~Clear
+    BB ↚ ⊟⊃(R~MeasureText⊙Size|×Size+₁⧻⊚=@\n)
+
+    DrawShade ↚ I~Draw~Rect I~Color~Hex "#2F2F2F7F" +12_6 BB ⊙(-6_3 Pos)
+
+    D ↚ ⊃(
+      I~Draw~Text⊙Size⊙Pos
+    | ⋅DrawShade
+    )
 
     α ← $ Welcome to Uiua Bejeweled
         $ Press space to start,
@@ -46,7 +54,7 @@ I ~ "git: https://github.com/marcos-cat/iris"
         $$ points! Press space to
         $$ restart or escape to exit.
 
-    DrawGameOver ← D Red λ
+    DrawGameOver ← D I~Color~Hex "#FFFFFF" λ
 
     ω ← $$ You won! :) You got _ points!
         $$ You had _ moves left!
@@ -57,10 +65,7 @@ I ~ "git: https://github.com/marcos-cat/iris"
 
     Stats ← (
       $"Score: _\nSwaps: _" ⊃Score N
-      ⊃(D I~Color~Hex "#FFFFFF"
-      | ×Char ⊂⊙2/↥⊜⧻⊸≠@\n
-        I~Draw~Rect I~Color~Hex "#2F2F2F5F" ⊙(-4_0 Pos)
-      )
+      D I~Color~Hex "#FFFFFF"
     )
   └─╴
 
@@ -118,11 +123,13 @@ I ~ "git: https://github.com/marcos-cat/iris"
 
   Step ← ⨬(
     # START
-    Text~DrawWelcome
     ⨬State~Begin State~Waiting ∊⊙@\s I~Key~Typed
+
+    Text~DrawWelcome
   | # WAIT
     I~Mouse!Pressed‼Left Slot
     ⨬State~Waiting State~Swapping ×∩(¬≍∞)⊸⊃α ω
+
     ⊙⊸DrawGlyphs
     ⊙⊸DrawSelected
     ⊙⊸Text~Stats
@@ -135,6 +142,7 @@ I ~ "git: https://github.com/marcos-cat/iris"
       | State~Waiting ⋅∘
       )
     )∊A₂⊃-⊟⊃(α|ω|⍜ω⋅∞⍜α⋅∞)
+
     ⊙⊸DrawGlyphs
     ⊙⊸Text~Stats
   | # SCORE
@@ -145,16 +153,21 @@ I ~ "git: https://github.com/marcos-cat/iris"
         )⤚≍⊸(F G S)
       )∨⊸⊃(>₀N|¬Valid)
     )<1e4⊸Score
+
     ⊙⊸DrawGlyphs
     ⊙⊸Text~Stats
   | # LOSE
+    ⊸DrawGlyphs
     Text~DrawGameOver⊸Score
+
     Restart!State~GameOver
   | # WIN
+    ⊸DrawGlyphs
     Text~DrawWin⊸⊃Score N
+
     Restart!State~Winning
   )
 
   State~Begin ρ
-  ◌◌I~Loop!Step
+  ◌◌I~Loop!(Step I~Draw~Background I~Color~Clear)
 └─╴
