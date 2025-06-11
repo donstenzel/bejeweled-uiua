@@ -31,6 +31,7 @@ I ~ "git: https://github.com/marcos-cat/iris"
 
   ┌─╴Text
     Size ← 40
+    Char ← 23_40
     Pos  ← 30_30
 
     D ↚ I~Draw~Text ⊙Size⊙Pos I~Draw~Background I~Color~Clear
@@ -54,7 +55,13 @@ I ~ "git: https://github.com/marcos-cat/iris"
 
     DrawWin ← D Green ω
 
-    Stats ← D ÷₂₅₅ [71 100 180] $"Score: _\nSwaps: _" ⊃Score N
+    Stats ← (
+      $"Score: _\nSwaps: _" ⊃Score N
+      ⊃(D I~Color~Hex "#FFFFFF"
+      | ×Char ⊂⊙2/↥⊜⧻⊸≠@\n
+        I~Draw~Rect I~Color~Hex "#2F2F2F5F" ⊙(-4_0 Pos)
+      )
+    )
   └─╴
 
   Gen ← ⌊⍜-₁×⧻Gs gen GridSize
