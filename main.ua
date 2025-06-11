@@ -20,12 +20,13 @@ I ~ "git: https://github.com/marcos-cat/iris"
     C ← ÷₂₅₅ [32 249 252]
   └─╴
 
-  Gs ← " ⍥⊞∧⍜⊃⍢⊡↻▽⧻⍉△"
-  Cs ← C![W Y Y Y P P P B B B G G G]
+  Gs ← " ⊞∧⊃⊡↻▽⧻⍉⊓⊙π@"
+  Cs ← C![W Y Y P B B B G G P Y O C]
 
   GridSize  ← 8_12
   Factor    ← 100
-  GlyphSize ← △layout Factor@◌
+  LH        ← 4/5
+  GlyphSize ← △layout LineHeight: LH Factor@◌
   WorldSize ← ×GridSize GlyphSize
 
   ┌─╴Text
@@ -34,10 +35,9 @@ I ~ "git: https://github.com/marcos-cat/iris"
 
     D ↚ I~Draw~Text ⊙Size⊙Pos I~Draw~Background I~Color~Clear
 
-    α ← $ Welcome to Uiua match 3
-        $ (more like group 4 as of
-        $ right now, logic is wip)
-        $ Press space to start!!
+    α ← $ Welcome to Uiua Bejeweled
+        $ Press space to start,
+        $ reach 10000 points to win!
 
     DrawWelcome ← D Orange α
 
@@ -71,10 +71,10 @@ I ~ "git: https://github.com/marcos-cat/iris"
 
   Slot ← ⨬⍜ω◌⍜α◌≍∞⊸α : ⌊÷GlyphSize ⊟°˜ℂ
 
-  I~Open ⇌WorldSize "Match 3 Glyphs"
+  I~Open ⇌WorldSize "Bejeweled"
   °I~Screen~FPS 10
 
-  Render ← ⍥₂/≡⊂ ≡≡(layout Color:)⊙Factor ∩⌞⊏⊙Cs⊙Gs Game~Glyphs
+  Render ← ⍥₂/≡⊂ ≡≡(layout Color: LineHeight: LH)⊙Factor ∩⌞⊏⊙Cs⊙Gs Game~Glyphs
 
   𝓣 ← I~Texture~LoadImage ↯⊂WorldSize 4 0
 
