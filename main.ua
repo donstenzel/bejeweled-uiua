@@ -76,6 +76,15 @@ I ~ "git: https://github.com/marcos-cat/iris"
   φ ↚ +×Gen⚂⊸=₀
   F ← ⍜Glyphs φ
 
+  Valid ← (
+    Glyphs
+    ⟜⇌2_1°⊡
+    ∩/⊂∩⌟⧈∘
+    ⊂⊙⤸⊙0_2
+    ≡⌟⍜⊡⇌
+    /∨⋅≠₀≡σ
+  )
+
   Slot ← ⨬⍜ω◌⍜α◌≍∞⊸α : ⌊÷GlyphSize ⊟°˜ℂ
 
   I~Open ⇌WorldSize "Bejeweled"
@@ -101,37 +110,51 @@ I ~ "git: https://github.com/marcos-cat/iris"
     |Winning
   └─╴
 
-  Restart! ← ⨬^0(State~Waiting New Gen⋅⚂) I~Key~Pressed @\s
+  ρ ← (
+    (⍢⋅^0(¬Valid) ^0)!(⍥(F ⊓G◌ ⍜Glyphs σ)∞ New Gen⚂)
+  )
+
+  Restart! ← ⨬^0(State~Waiting⋅ρ) I~Key~Pressed @\s
 
   Step ← ⨬(
+    # START
     Text~DrawWelcome
     ⨬State~Begin State~Waiting ∊⊙@\s I~Key~Typed
-  | I~Mouse!Pressed‼Left Slot
+  | # WAIT
+    I~Mouse!Pressed‼Left Slot
     ⨬State~Waiting State~Swapping ×∩(¬≍∞)⊸⊃α ω
     ⊙⊸DrawGlyphs
     ⊙⊸DrawSelected
     ⊙⊸Text~Stats
-  | ⨬(State~Waiting ◌
+  | # SWAP
+    ⨬(State~Waiting ◌
     | ≍⤚∩Glyphs⊸(F G S)⊸(⍜⊙Glyphs⍜⊡⇌ ⊙⍜N-₁)
-      ⨬(State~Scoring ∘|State~Waiting ⋅∘)
+      ⨬(⨬(State~GameOver ∘
+        | State~Scoring ∘
+        )⊸Valid
+      | State~Waiting ⋅∘
+      )
     )∊A₂⊃-⊟⊃(α|ω|⍜ω⋅∞⍜α⋅∞)
     ⊙⊸DrawGlyphs
     ⊙⊸Text~Stats
-  | ⨬(State~Winning
+  | # SCORE
+    ⨬(State~Winning
     | ⨬(State~GameOver
       | ⨬(State~Scoring
         | State~Waiting
         )⤚≍⊸(F G S)
-      )>₀⊸N
+      )∨⊸⊃(>₀N|¬Valid)
     )<1e4⊸Score
     ⊙⊸DrawGlyphs
     ⊙⊸Text~Stats
-  | Text~DrawGameOver⊸Score
+  | # LOSE
+    Text~DrawGameOver⊸Score
     Restart!State~GameOver
-  | Text~DrawWin⊸⊃Score N
+  | # WIN
+    Text~DrawWin⊸⊃Score N
     Restart!State~Winning
   )
 
-  State~Begin ⍥(F ⊓G◌ ⍜Glyphs σ)∞ New Gen⚂
+  State~Begin ρ
   ◌◌I~Loop!Step
 └─╴
