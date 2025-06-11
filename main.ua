@@ -85,7 +85,7 @@ I ~ "git: https://github.com/marcos-cat/iris"
 
   𝓣 ← I~Texture~LoadImage ↯⊂WorldSize 4 0
 
-  DrawGlyphs ← I~Texture~DrawScreen°⊸I~Texture~Image Render ⊙𝓣
+  DrawGlyphs ← I~Texture~DrawScreen °⊸I~Texture~Image Render ⊙𝓣
 
   DrawSelected ← ⊃(
     I~Draw~Rect ⊂⊙0.2 Blue ∩⇌⟜×GlyphSize α
@@ -111,19 +111,19 @@ I ~ "git: https://github.com/marcos-cat/iris"
     ⊙⊸DrawGlyphs
     ⊙⊸DrawSelected
     ⊙⊸Text~Stats
-  | ∊A₂⊃-⊟⊃(α|ω|⍜ω⋅∞⍜α⋅∞)
-    ⨬(State~Waiting ◌
-    | State~Scoring ⍜⊙Glyphs⍜⊡⇌ ⊙⍜N-₁
-    )
+  | ⨬(State~Waiting ◌
+    | ≍⤚∩Glyphs⊸(F G S)⊸(⍜⊙Glyphs⍜⊡⇌ ⊙⍜N-₁)
+      ⨬(State~Scoring ∘|State~Waiting ⋅∘)
+    )∊A₂⊃-⊟⊃(α|ω|⍜ω⋅∞⍜α⋅∞)
     ⊙⊸DrawGlyphs
     ⊙⊸Text~Stats
-  | ⨬(State~GameOver
-    | ⨬(State~Winning
+  | ⨬(State~Winning
+    | ⨬(State~GameOver
       | ⨬(State~Scoring
         | State~Waiting
         )⤚≍⊸(F G S)
-      )<1e4⊸Score
-    )>₀⊸N
+      )>₀⊸N
+    )<1e4⊸Score
     ⊙⊸DrawGlyphs
     ⊙⊸Text~Stats
   | Text~DrawGameOver⊸Score
@@ -132,6 +132,6 @@ I ~ "git: https://github.com/marcos-cat/iris"
     Restart!State~Winning
   )
 
-  State~Begin New Gen⚂
+  State~Begin ⍥(F ⊓G◌ ⍜Glyphs σ)∞ New Gen⚂
   ◌◌I~Loop!Step
 └─╴
