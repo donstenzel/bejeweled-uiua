@@ -35,7 +35,7 @@ R ~ "git: https://github.com/uiua-lang/rayua"
     Char ← 23_40
     Pos  ← 30_30
 
-    BB ↚ ⊟⊃(R~MeasureText⊙Size|×Size+₁⧻⊚=@\n)
+    BB ↚ ⊟⊃(R~MeasureText|×+₁⧻⊚=@\n) ⊙Size
 
     DrawShade ↚ I~Draw~Rect I~Color~Hex "#2F2F2F7F" +12_6 BB ⊙(-6_3 Pos)
 
@@ -50,11 +50,17 @@ R ~ "git: https://github.com/uiua-lang/rayua"
 
     DrawWelcome ← D Orange α
 
-    λ ← $$ You lost :( You got _/10000
-        $$ points! Press space to
-        $$ restart or escape to exit.
+    λ₁ ← $$ You lost :( You got _/10000
+         $$ points, but have no swaps
+         $$ left! Press space to restart
+         $$ or escape to exit.
 
-    DrawGameOver ← D I~Color~Hex "#FFFFFF" λ
+    λ₂ ← $$ You lost :( You got _/10000
+         $$ points! There are no valid
+         $$ moves left. Press space to
+         $$ restart or escape to exit.
+
+    DrawGameOver ← D I~Color~Hex "#FFFFFF" ⨬λ₁ λ₂ >₀
 
     ω ← $$ You won! :) You got _ points!
         $$ You had _ moves left!
@@ -75,11 +81,14 @@ R ~ "git: https://github.com/uiua-lang/rayua"
   σ ← :⊓/◇+(⍜⊡≡⋅0◴/⊂/◇⊂)⊜κ⊸°˜⊡
   S ← ⍜Score+ ⍜Glyphs σ
 
-  δ ↚ ⍥(⨬◌⍜⊡≡⇌±⊸⧻ ⊜∘ °˜⊡⊸⦷[¤W¤0])∞
+  δ ↚ ⍥(⍜⊜□⍚⇌⊸⦷[¤W¤0])∞
   G ← ⍜Glyphs δ
 
   φ ↚ +×Gen⚂⊸=₀
   F ← ⍜Glyphs φ
+
+  Fall ← ⍜Glyphs(⍜⊜□⍚⇌⊸⦷[¤W¤0])
+  Fill ← ⍜Glyphs⍜⊢(+×⌊⍜-₁×⧻Gs gen⊣GridSize⚂⊸=₀)
 
   Valid ← (
     Glyphs
@@ -95,7 +104,7 @@ R ~ "git: https://github.com/uiua-lang/rayua"
   I~Open ⇌WorldSize "Bejeweled"
   °I~Screen~FPS 10
 
-  Render ← ⍥₂/≡⊂ ≡≡(layout Color: LineHeight: LH)⊙Factor ∩⌞⊏⊙Cs⊙Gs Game~Glyphs
+  Render ← ⍥₂/≡⊂ ≡≡(layout Color: LineHeight: LH)⊙Factor ∩⌞⊏⊙Cs⊙Gs Glyphs
 
   𝓣 ← I~Texture~LoadImage ↯⊂WorldSize 4 0
 
@@ -113,6 +122,8 @@ R ~ "git: https://github.com/uiua-lang/rayua"
     |Scoring
     |GameOver
     |Winning
+    |Falling
+    |Filling
   └─╴
 
   ρ ← (
@@ -135,10 +146,8 @@ R ~ "git: https://github.com/uiua-lang/rayua"
     ⊙⊸Text~Stats
   | # SWAP
     ⨬(State~Waiting ◌
-    | ≍⤚∩Glyphs⊸(F G S)⊸(⍜⊙Glyphs⍜⊡⇌ ⊙⍜N-₁)
-      ⨬(⨬(State~GameOver ∘
-        | State~Scoring ∘
-        )⊸Valid
+    | ⤚≍⊸S⊸(⍜⊙Glyphs⍜⊡⇌)
+      ⨬(State~Falling ⍜N-₁
       | State~Waiting ⋅∘
       )
     )∊A₂⊃-⊟⊃(α|ω|⍜ω⋅∞⍜α⋅∞)
@@ -148,24 +157,38 @@ R ~ "git: https://github.com/uiua-lang/rayua"
   | # SCORE
     ⨬(State~Winning
     | ⨬(State~GameOver
-      | ⨬(State~Scoring
+      | ⨬(State~Falling
         | State~Waiting
-        )⤚≍⊸(F G S)
-      )∨⊸⊃(>₀N|¬Valid)
+        )⤚≍⊸S
+      )×⊸⊃(>₀N|Valid)
     )<1e4⊸Score
 
     ⊙⊸DrawGlyphs
     ⊙⊸Text~Stats
   | # LOSE
-    ⊸DrawGlyphs
-    Text~DrawGameOver⊸Score
-
     Restart!State~GameOver
-  | # WIN
-    ⊸DrawGlyphs
-    Text~DrawWin⊸⊃Score N
 
+    ⊙⊸DrawGlyphs
+    ⊙⊸⊃N Score
+    ⊙Text~DrawGameOver
+  | # WIN
     Restart!State~Winning
+
+    ⊙⊸DrawGlyphs
+    ⊙⊸⊃Score N
+    ⊙Text~DrawWin
+  | # FALLING
+    ⨬(State~Scoring ∘
+    | State~Filling Fall
+    )/∨♭=₀⊸Glyphs
+
+    ⊙⊸DrawGlyphs
+    ⊙⊸Text~Stats
+  | # FILLING
+    State~Falling Fill
+
+    ⊙⊸DrawGlyphs
+    ⊙⊸Text~Stats
   )
 
   State~Begin ρ
