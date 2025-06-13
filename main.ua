@@ -1,14 +1,7 @@
 # Experimental!
 I ~ "git: https://github.com/marcos-cat/iris"
+  Hx ← I~Color~Hex
 R ~ "git: https://github.com/uiua-lang/rayua"
-
-~ {
-  Glyphs
-  Score ← 0
-  α ← ∞
-  ω ← ∞
-  N ← 30
-}
 
 ┌─╴C
   W ← ÷₂₅₅ [255 255 255]
@@ -20,9 +13,6 @@ R ~ "git: https://github.com/uiua-lang/rayua"
   C ← ÷₂₅₅ [32 249 252]
 └─╴
 
-Gs ← " ⊞∧⊃⊡↻▽⧻⍉⊓⊙π@"
-Cs ← C![W Y Y P B B B G G P Y O C]
-
 GridSize  ← 8_12
 Factor    ← 100
 LH        ← 4/5
@@ -31,23 +21,11 @@ WorldSize ← ×GridSize GlyphSize
 
 ┌─╴Text
   Size ← 40
-  Char ← 23_40
   Pos  ← 30_30
-
-  BB ↚ ⊟⊃(R~MeasureText|×+₁⧻⊚=@\n) ⊙Size
-
-  DrawShade ↚ I~Draw~Rect I~Color~Hex "#2F2F2F7F" +12_6 BB ⊙(-6_3 Pos)
-
-  D ↚ ⊃(
-    I~Draw~Text⊙Size⊙Pos
-  | ⋅DrawShade
-  )
 
   α ← $ Welcome to Uiua Bejeweled
       $ Press space to start,
       $ reach 10000 points to win!
-
-  DrawWelcome ← D Orange α
 
   λ₁ ← $$ You lost :( You got _/10000
        $$ points, but have no swaps
@@ -59,60 +37,73 @@ WorldSize ← ×GridSize GlyphSize
        $$ moves left. Press space to
        $$ restart or escape to exit.
 
-  DrawGameOver ← D I~Color~Hex "#FFFFFF" ⨬λ₁ λ₂ >₀
-
   ω ← $$ You won! :) You got _ points!
       $$ You had _ moves left!
       $$ Press space to restart
       $$ or escape to exit.
-
-  DrawWin ← D Green ω
-
-  Stats ← (
-    $"Score: _\nSwaps: _" ⊃Score N
-    D I~Color~Hex "#FFFFFF"
-  )
 └─╴
 
-Gen ← ⌊⍜-₁×⧻Gs gen GridSize
+Cs ← C![W G B Y P O C]
+Gs ← {" " "⍉⧻△" "÷⊡⊗" "◇⧅⊕" "⊃⊓" "ηπτ∞" "@$"}
 
-κ ← ×3e2⊓⧻□⊃⊚▽×∊A₂⊸≡(⊃⊢/≍⧈-⍆)⧅₃>
-σ ← :⊓/◇+(⍜⊡≡⋅0◴/⊂/◇⊂)⊜κ⊸°˜⊡
-S ← ⍜Score+ ⍜Glyphs σ
+~ {
+  Glyphs
+  𝒮 ← 0
+  α ← ∞
+  ω ← ∞
+  N ← 30
+}
 
-δ ↚ ⍥(⍜⊜□⍚⇌⊸⦷[¤W¤0])∞
-G ← ⍜Glyphs δ
+Gen ← ⍜°˜+⤚(
+  ⍜×⌊ ≡₀◇⧻⊏⊙Gs
+)⍜-₁×⧻Cs gen
 
-φ ↚ +×Gen⚂⊸=₀
-F ← ⍜Glyphs φ
+Split ← : ≡₀◇(⊏⁅×⊙⊸⧻) ⊙(∩⌞⊏|Gs Cs) °+
 
-Fall ← ⍜Glyphs(⍜⊜□⍚⇌⊸⦷[¤W¤0])
-Fill ← ⍜Glyphs⍜⊢(+×⌊⍜-₁×⧻Gs gen⊣GridSize⚂⊸=₀)
+κ ← ⊃(□◴/⊂▽|×3e2⧻⊚)×∊A₂⊸≡(⊃⊢/≍⧈-⍆)⧅₃>
+σ ← ⊃𝄐(⍜⊡×₀/◇⊂)⋅/+⊜κ⊃⌊°⊡
+
+Score ← ⍜𝒮 + ⍜Glyphs σ
+Fall  ← ⍜Glyphs(⍜⊜□⍚⇌⊸⦷[¤W¤0])
+Fill  ← ⍜Glyphs⍜⊢(+×Gen⊙⚂⊸⊃⧻=₀)
 
 Valid ← (
-  Glyphs
-  ⟜⇌2_1°⊡
-  ∩/⊂∩⌟⧈∘
-  ⊂⊙⤸⊙0_2
-  ≡⌟⍜⊡⇌
-  /∨⋅≠₀≡σ
+  ⟜⇌2_1°⊡ Glyphs
+  ⊂⊙⤸⊙0_2 ∩/⊂∩⌟⧈∘
+  /∨⋅≠₀≡σ ≡⌟⍜⊡⇌
 )
 
 Slot ← ⨬⍜ω◌⍜α◌≍∞⊸α : ⌊÷GlyphSize ⊟°˜ℂ
 
+Render ← ⍥₂/≡⊂ ≡≡(layout Color: LineHeight: LH) ⊙Factor Split Glyphs
+
 I~Open ⇌WorldSize "Bejeweled"
 °I~Screen~FPS 10
 
-Render ← ⍥₂/≡⊂ ≡≡(layout Color: LineHeight: LH)⊙Factor ∩⌞⊏⊙Cs⊙Gs Glyphs
-
 𝓣 ← I~Texture~LoadImage ↯⊂WorldSize 4 0
 
-DrawGlyphs ← I~Texture~DrawScreen °⊸I~Texture~Image Render ⊙𝓣
+┌─╴Draw
+  BB ← ⊟⊃(R~MeasureText|×+₁⧻⊚=@\n)
 
-DrawSelected ← ⊃(
-  I~Draw~Rect ⊂⊙0.2 Blue ∩⇌⟜×GlyphSize α
-| I~Draw~Rect ⊂⊙0.2 Orange ∩⇌⟜×GlyphSize ω
-)
+  Glyphs ← I~Texture~DrawScreen °⊸I~Texture~Image Render ⊙𝓣
+
+  Selected ← ⊃(
+    I~Draw~Rect ⊂⊙0.2 Blue ∩⇌⟜×GlyphSize α
+  | I~Draw~Rect ⊂⊙0.2 Orange ∩⇌⟜×GlyphSize ω
+  )
+
+  Shade ← I~Draw~Rect Hx "#2F2F2F7F" +16_8 ⊃𝄐˜BB(-⋅8_4)
+
+  TextBx ← ⊃I~Draw~Text⋅Shade ⊙Text!(Size Pos)
+
+  Start ← TextBx Hx "#aed7a3" Text~α
+
+  Stats ← TextBx Hx "#FFFFFF" $"Score: _\nSwaps: _" ⊃𝒮 N
+
+  GameOver ← TextBx Hx "#FFFFFF" Text!⨬λ₁ λ₂ >₀ ⊃N 𝒮
+
+  Win ← TextBx Green Text~ω ⊃𝒮 N
+└─╴
 
 ┌─╴State
   |Begin
@@ -126,7 +117,7 @@ DrawSelected ← ⊃(
 └─╴
 
 ρ ← (
-  (⍢⋅^0(¬Valid) ^0)!(⍥(F ⊓G◌ ⍜Glyphs σ)∞ New Gen⚂)
+  (⍢⋅^0(¬Valid) ^0)!(⍥(Fall ⊓Fill◌ ⍜Glyphs σ)∞ New Gen GridSize ⚂)
 )
 
 Restart! ← ⨬^0(State~Waiting⋅ρ) I~Key~Pressed @\s
@@ -135,59 +126,56 @@ Step ← ⨬(
   # START
   ⨬State~Begin State~Waiting ∊⊙@\s I~Key~Typed
 
-  Text~DrawWelcome
+  Draw~Start
 | # WAIT
   I~Mouse!Pressed‼Left Slot
   ⨬State~Waiting State~Swapping ×∩(¬≍∞)⊸⊃α ω
 
-  ⊙⊸DrawGlyphs
-  ⊙⊸DrawSelected
-  ⊙⊸Text~Stats
+  ⊙⊸Draw~Glyphs
+  ⊙⊸Draw~Selected
+  ⊙⊸Draw~Stats
 | # SWAP
   ⨬(State~Waiting ◌
-  | ⤚≍⊸S⊸(⍜⊙Glyphs⍜⊡⇌)
-    ⨬(State~Falling ⍜N-₁
+  | ⨬(State~Falling ⍜N-₁
     | State~Waiting ⋅∘
-    )
+    )⤚≍⊸Score⊸⍜⊙Glyphs⍜⊡⇌
   )∊A₂⊃-⊟⊃(α|ω|⍜ω⋅∞⍜α⋅∞)
 
-  ⊙⊸DrawGlyphs
-  ⊙⊸Text~Stats
+  ⊙⊸Draw~Glyphs
+  ⊙⊸Draw~Stats
 | # SCORE
   ⨬(State~Winning
   | ⨬(State~GameOver
     | ⨬(State~Falling
       | State~Waiting
-      )⤚≍⊸S
+      )⤚≍⊸Score
     )×⊸⊃(>₀N|Valid)
-  )<1e4⊸Score
+  )<1e4⊸𝒮
 
-  ⊙⊸DrawGlyphs
-  ⊙⊸Text~Stats
+  ⊙⊸Draw~Glyphs
+  ⊙⊸Draw~Stats
 | # LOSE
   Restart!State~GameOver
 
-  ⊙⊸DrawGlyphs
-  ⊙⊸⊃N Score
-  ⊙Text~DrawGameOver
+  ⊙⊸Draw~Glyphs
+  ⊙⊸Draw~GameOver
 | # WIN
   Restart!State~Winning
 
-  ⊙⊸DrawGlyphs
-  ⊙⊸⊃Score N
-  ⊙Text~DrawWin
+  ⊙⊸Draw~Glyphs
+  ⊙⊸Draw~Win
 | # FALLING
   ⨬(State~Scoring ∘
   | State~Filling Fall
   )/∨♭=₀⊸Glyphs
 
-  ⊙⊸DrawGlyphs
-  ⊙⊸Text~Stats
+  ⊙⊸Draw~Glyphs
+  ⊙⊸Draw~Stats
 | # FILLING
   State~Falling Fill
 
-  ⊙⊸DrawGlyphs
-  ⊙⊸Text~Stats
+  ⊙⊸Draw~Glyphs
+  ⊙⊸Draw~Stats
 )
 
 State~Begin ρ
