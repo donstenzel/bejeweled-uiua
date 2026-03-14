@@ -16,7 +16,7 @@ R ~ "git: https://github.com/uiua-lang/rayua"
 GridSize  ← 8_12
 Factor    ← 100
 LH        ← 4/5
-GlyphSize ← △layout LineHeight: LH Factor@◌
+GlyphSize ← △layout!(°⊸LineHeight LH) Factor@◌
 WorldSize ← ×GridSize GlyphSize
 
 ┌─╴Text
@@ -58,10 +58,10 @@ Gen ← ⍜°˜+⤚(
   ⍜×⌊ ≡₀◇⧻⊏⊙Gs
 )⍜-₁×⧻Cs gen
 
-Split ← : ≡₀◇(⊏⁅×⊙⊸⧻) ⊙(∩⌞⊏|Gs Cs) °+
+Split ← : ≡₀◇(⊏⁅×⊙⊸⧻) ⊙⊙(∩⌞⊏|Gs Cs) °+
 
 κ ← ⊃(□◴/⊂▽|×3e2⧻⊚)×∊A₂⊸≡(⊃⊢/≍⧈-⍆)⧅₃>
-σ ← ⊃𝄐(⍜⊡×₀/◇⊂)⋅/+⊜κ⊃⌊°⊡
+σ ← ⊃∪(⍜⊡×₀/◇⊂)⋅/+⊜κ⊃⌊°⊡
 
 Score ← ⍜𝒮 + ⍜Glyphs σ
 Fall  ← ⍜Glyphs(⍜⊜□⍚⇌⊸⦷[¤W¤0])
@@ -75,24 +75,24 @@ Valid ← (
 
 Slot ← ⨬⍜ω◌⍜α◌≍∞⊸α : ⌊÷GlyphSize ⊟°˜ℂ
 
-Render ← ⍥₂/≡⊂ ≡≡(layout Color: LineHeight: LH) ⊙Factor Split Glyphs
+Render ← ⍥₂/≡⊂ ≡≡layout!(°⊸LineHeight LH °⊸Color) ⊙Factor Split Glyphs
 
 I~Open ⇌WorldSize "Bejeweled"
-°I~Screen~FPS 10
+°I~Window~FPS 10
 
 𝓣 ← I~Texture~LoadImage ↯⊂WorldSize 4 0
 
 ┌─╴Draw
   BB ← ⊟⊃(R~MeasureText|×+₁⧻⊚=@\n)
 
-  Glyphs ← I~Texture~DrawScreen °⊸I~Texture~Image Render ⊙𝓣
+  Glyphs ← I~Draw~Background °⊸I~Texture~Image Render ⊙𝓣
 
   Selected ← ⊃(
     I~Draw~Rect ⊂⊙0.2 Blue ∩⇌⟜×GlyphSize α
   | I~Draw~Rect ⊂⊙0.2 Orange ∩⇌⟜×GlyphSize ω
   )
 
-  Shade ← I~Draw~Rect Hx "#2F2F2F7F" +16_8 ⊃𝄐˜BB(-⋅8_4)
+  Shade ← I~Draw~Rect Hx "#2F2F2F7F" +16_8 ⊃∪˜BB(-⋅8_4)
 
   TextBx ← ⊃I~Draw~Text⋅Shade ⊙Text!(Size Pos)
 
